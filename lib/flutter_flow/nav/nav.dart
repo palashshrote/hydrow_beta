@@ -142,8 +142,7 @@ extension NavigationExtensions on BuildContext {
 }
 
 extension GoRouterExtensions on GoRouter {
-  AppStateNotifier get appState =>
-      (routerDelegate.refreshListenable as AppStateNotifier);
+  AppStateNotifier get appState => (routerDelegate as AppStateNotifier);
   void prepareAuthEvent([bool ignoreRedirect = false]) =>
       appState.hasRedirect() && !ignoreRedirect
           ? null
@@ -151,16 +150,15 @@ extension GoRouterExtensions on GoRouter {
   bool shouldRedirect(bool ignoreRedirect) =>
       !ignoreRedirect && appState.hasRedirect();
   void setRedirectLocationIfUnset(String location) =>
-      (routerDelegate.refreshListenable as AppStateNotifier)
-          .updateNotifyOnAuthChange(false);
+      (routerDelegate as AppStateNotifier).updateNotifyOnAuthChange(false);
 }
 
 extension _GoRouterStateExtensions on GoRouterState {
   Map<String, dynamic> get extraMap =>
       extra != null ? extra as Map<String, dynamic> : {};
   Map<String, dynamic> get allParams => <String, dynamic>{}
-    ..addAll(params)
-    ..addAll(queryParams)
+    ..addAll(pathParameters)
+    ..addAll(uri.queryParameters)
     ..addAll(extraMap);
   TransitionInfo get transitionInfo => extraMap.containsKey(kTransitionInfoKey)
       ? extraMap[kTransitionInfoKey] as TransitionInfo
@@ -240,7 +238,7 @@ class FFRoute {
   GoRoute toRoute(AppStateNotifier appStateNotifier) => GoRoute(
         name: name,
         path: path,
-        redirect: (state) {
+        redirect: (context, state) {
           if (appStateNotifier.shouldRedirect) {
             final redirectLocation = appStateNotifier.getRedirectLocation();
             appStateNotifier.clearRedirectLocation();
@@ -248,7 +246,9 @@ class FFRoute {
           }
 
           if (requireAuth && !appStateNotifier.loggedIn) {
-            appStateNotifier.setRedirectLocationIfUnset(state.location);
+            // appStateNotifier.setRedirectLocationIfUnset(state.location);
+            //JUGAAD
+            appStateNotifier.setRedirectLocationIfUnset(state.matchedLocation);
             return '/logInSignUp';
           }
           return null;

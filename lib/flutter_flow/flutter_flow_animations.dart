@@ -23,6 +23,7 @@ class AnimationInfo {
   late AnimationController controller;
 }
 
+/*
 void createAnimation(AnimationInfo animation, TickerProvider vsync) {
   final newController = AnimationController(vsync: vsync);
   animation.controller = newController;
@@ -33,7 +34,7 @@ void createAnimation(AnimationInfo animation, TickerProvider vsync) {
 void setupAnimations(Iterable<AnimationInfo> animations, TickerProvider vsync) {
   animations.forEach((animation) => createAnimation(animation, vsync));
 }
-
+*/
 extension AnimatedWidgetExtension on Widget {
   Widget animateOnPageLoad(AnimationInfo animationInfo) => Animate(
       controller:
